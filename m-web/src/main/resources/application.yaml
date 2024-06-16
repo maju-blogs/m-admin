@@ -1,0 +1,70 @@
+liteflow:
+  rule-source: config/*.el.xml
+# springdoc-openapi项目配置
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  group-configs:
+    - group: 'default'
+      paths-to-match: '/**'
+      packages-to-scan: org.m.web.controller
+# knife4j的增强配置，不需要增强可以不配
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+# DataSource Config
+spring:
+  datasource:
+    url: jdbc:mysql://192.168.1.108:3306/m-web?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss     #和前端沟通好
+    time-zone: Asia/Shanghai
+
+  main:
+    lazy-initialization: false
+
+
+############## Sa-Token 配置 (文档: https://sa-token.cc) ##############
+sa-token:
+  # token 名称（同时也是 cookie 名称）
+  token-name: Authorization
+  # token 有效期（单位：秒） 默认30天，-1 代表永久有效
+  timeout: 84600
+  # token 最低活跃频率（单位：秒），如果 token 超过此时间没有访问系统就会被冻结，默认-1 代表不限制，永不冻结
+  active-timeout: 3600
+  # 是否允许同一账号多地同时登录 （为 true 时允许一起登录, 为 false 时新登录挤掉旧登录）
+  is-concurrent: true
+  # 在多人登录同一账号时，是否共用一个 token （为 true 时所有登录共用一个 token, 为 false 时每次登录新建一个 token）
+  is-share: false
+  # token 风格（默认可取值：uuid、simple-uuid、random-32、random-64、random-128、tik）
+  # 是否输出操作日志
+  is-log: true
+  # jwt秘钥
+  jwt-secret-key: asdasdasifhueuiwyurfewbfjsdafjk
+
+
+#mqtt配置
+mqtt:
+  server:
+    username: mqtt
+    password: 2e51bf05564158d7eff6d5f0b9fcbb5f
+    wait-time: 10
+    is-open-ssl: false
+    websocket-port: 8082
+    ssl-certificate-path: classpath:ca/server.crt
+    ssl-certificate-key-path: classpath:ca/server.key
+  client:
+    username: mqtt
+    password: 2e51bf05564158d7eff6d5f0b9fcbb5f
+    client-crt-path: classpath:ca/ca.crt
+    #   启用证书 ssl://127.0.0.1:8082 关闭证书 tcp://127.0.0.1:8082
+    url: tcp://127.0.0.1:8082
+    client-id: android-server
+    topics: android-topic

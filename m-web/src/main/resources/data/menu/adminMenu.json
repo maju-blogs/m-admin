@@ -1,0 +1,118 @@
+{
+  "code": 0,
+  "type": "adminMenu",
+  "data": [
+    {
+      "path": "/shellManage",
+      "name": "shellManage",
+      "redirect": "config/index",
+      "meta": {
+        "title": "脚本管理",
+        "isLink": "",
+        "isHide": false,
+        "isKeepAlive": true,
+        "isAffix": true,
+        "isIframe": false,
+        "roles": [
+          "admin",
+          "common"
+        ],
+        "icon": "ele-SetUp"
+      },
+      "children": [
+        {
+          "path": "/config",
+          "name": "config",
+          "component": "config/index",
+          "meta": {
+            "title": "脚本配置",
+            "isLink": "",
+            "isHide": false,
+            "isKeepAlive": true,
+            "isAffix": true,
+            "isIframe": false,
+            "roles": [
+              "admin",
+              "common"
+            ],
+            "icon": "ele-Setting"
+          }
+        },
+        {
+          "path": "/python",
+          "name": "python",
+          "component": "python/index",
+          "meta": {
+            "title": "脚本编辑",
+            "isLink": "",
+            "isHide": false,
+            "isKeepAlive": true,
+            "isAffix": false,
+            "isIframe": false,
+            "roles": [
+              "admin",
+              "common"
+            ],
+            "icon": "ele-Tickets"
+          }
+        },
+        {
+          "path": "/corn",
+          "name": "corn",
+          "component": "corn/index",
+          "meta": {
+            "title": "定时任务",
+            "isLink": "",
+            "isHide": false,
+            "isKeepAlive": true,
+            "isAffix": false,
+            "isIframe": false,
+            "roles": [
+              "admin",
+              "common"
+            ],
+            "icon": "ele-Timer"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/payManage",
+      "name": "payManage",
+      "redirect": "pay/index",
+      "meta": {
+        "title": "支付管理",
+        "isLink": "",
+        "isHide": false,
+        "isKeepAlive": true,
+        "isAffix": true,
+        "isIframe": false,
+        "roles": [
+          "admin",
+          "common"
+        ],
+        "icon": "ele-Money"
+      },
+      "children": [
+        {
+          "path": "/pay",
+          "name": "pay",
+          "component": "pay/index",
+          "meta": {
+            "title": "客户端管理",
+            "isLink": "",
+            "isHide": false,
+            "isKeepAlive": true,
+            "isAffix": false,
+            "isIframe": false,
+            "roles": [
+              "admin",
+              "common"
+            ],
+            "icon": "ele-Iphone"
+          }
+        }
+      ]
+    }
+  ]
+}
