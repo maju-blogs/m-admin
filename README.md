@@ -73,19 +73,19 @@
 
 #### 项目截图
 
-![客户端管理](https://github.com/maju-blogs/pulbic-static-file/blob/master/m-admin/\image-20240616191257127.png)
+![客户端管理](https://github.com/maju-blogs/pulbic-static-file/blob/master/m-admin/image-20240616191257127.png)
 
-![任务管理](https://github.com/maju-blogs/pulbic-static-file/blob/master/m-admin/\image-20240616191320744.png)
+![任务管理](https://github.com/maju-blogs/pulbic-static-file/blob/master/m-admin/image-20240616191320744.png)
 
-![二维码管理](https://github.com/maju-blogs/pulbic-static-file/blob/master/m-admin/\image-20240616191357242.png)
+![二维码管理](https://github.com/maju-blogs/pulbic-static-file/blob/master/m-admin/image-20240616191357242.png)
 
-![支付方式管理](https://github.com/maju-blogs/pulbic-static-file/blob/master/m-admin/\image-20240616191423672.png)
+![支付方式管理](https://github.com/maju-blogs/pulbic-static-file/blob/master/m-admin/image-20240616191423672.png)
 
-![订单管理](https://github.com/maju-blogs/pulbic-static-file/blob/master/m-admin/\image-20240616191433005.png)
+![订单管理](https://github.com/maju-blogs/pulbic-static-file/blob/master/m-admin/image-20240616191433005.png)
 
-![支付体验](https://github.com/maju-blogs/pulbic-static-file/blob/master/m-admin/\image-20240616191454294.png)
+![支付体验](https://github.com/maju-blogs/pulbic-static-file/blob/master/m-admin/image-20240616191454294.png)
 
-![支付成功](https://github.com/maju-blogs/pulbic-static-file/blob/master/m-admin/\image-20240616191532061.png)
+![支付成功](https://github.com/maju-blogs/pulbic-static-file/blob/master/m-admin/image-20240616191532061.png)
 
 
 
