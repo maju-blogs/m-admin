@@ -104,15 +104,6 @@ public class PayHandleMsgImpl extends AbsTaskMqttHandle {
                 }
                 MqttUpDto dto = new MqttUpDto(taskExecuteDto.getTopic(), taskExecuteDto.getTaskType(), IdUtil.getSnowflakeNextIdStr(), taskExecuteDto.getTaskId());
                 TaskExecuteDto result = super.doTask(dto, taskExecuteDto.getTopic());
-                if (result.isOk()) {
-                    errorCount.set(0);
-                } else {
-                    errorCount.incrementAndGet();
-                }
-                //连续执行失败 告警
-                if (errorCount.get() > PublicConstant.PAY_MAX_ERROR_COUNT) {
-                    PushPlusUtil.send("支付任务已经连续失败" + PublicConstant.PAY_MAX_ERROR_COUNT + "次");
-                }
                 log.debug("result:{}", JSON.toJSONString(result));
                 if (result.isOk() && StrUtil.isNotEmpty(result.getResult()) && mather(result.getResult(), taskExecuteDto)) {
                     taskExecuteDto.setPayStatus(PayStatusEnum.PAY_SUCCESS.getType());
