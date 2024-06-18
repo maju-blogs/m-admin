@@ -65,7 +65,7 @@ public class PayServerImpl implements IPayServer {
     @Override
     public PayDto getPay(HttpServletRequest request) {
         String paySessionId = getSessionId(request);
-        if (sessionId == null || request.getSession().getAttribute("clientId") == null) {
+        if (paySessionId == null || request.getSession().getAttribute("clientId") == null) {
             throw new RuntimeException("支付通道异常!,请刷新重试");
         }
         PayDto payDto = payMap.get(paySessionId);
