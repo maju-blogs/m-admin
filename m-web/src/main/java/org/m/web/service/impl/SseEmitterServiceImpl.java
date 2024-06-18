@@ -143,10 +143,10 @@ public class SseEmitterServiceImpl implements ISseEmitterService {
             // 推送消息失败，记录错误日志，进行重推
             log.error("推送消息失败：{},尝试进行重推", messageVo.toString());
             boolean isSuccess = true;
-            // 推送消息失败后，每隔10s推送一次，推送5次
+            // 推送消息失败后，每隔3s推送一次，推送5次
             for (int i = 0; i < 5; i++) {
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(3000);
                     sseEmitter = sseCache.get(clientId);
                     if (sseEmitter == null) {
                         log.error("{}的第{}次消息重推失败，未创建长链接", clientId, i + 1);
@@ -197,10 +197,10 @@ public class SseEmitterServiceImpl implements ISseEmitterService {
         return throwable -> {
             log.error("SseEmitterServiceImpl[errorCallBack]：连接异常,客户端ID:{}", clientId);
 
-            // 推送消息失败后，每隔10s推送一次，推送5次
+            // 推送消息失败后，每隔3s推送一次，推送5次
             for (int i = 0; i < 5; i++) {
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(3000);
                     SseEmitter sseEmitter = sseCache.get(clientId);
                     if (sseEmitter == null) {
                         log.error("SseEmitterServiceImpl[errorCallBack]：第{}次消息重推失败,未获取到 {} 对应的长链接", i + 1, clientId);
