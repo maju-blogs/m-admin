@@ -47,7 +47,7 @@ public class PayHandleMsgImpl extends AbsTaskMqttHandle {
     @Resource
     private IPayConfigService iPayConfigService;
 
-    private boolean isRun = false;
+    private Boolean isRun = false;
 
     ConcurrentLinkedQueue<TaskExecuteDto> payQueue = new ConcurrentLinkedQueue<>();
     Set<String> payTopics = new HashSet<>();
@@ -78,60 +78,66 @@ public class PayHandleMsgImpl extends AbsTaskMqttHandle {
     }
 
 
-    public boolean addPayTask(PayConfigPo configPo, String qrMark, String payId, int timeOut, Consumer<TaskExecuteDto> consumer) {
+   public boolean addPayTask(PayConfigPo configPo, String qrMark, String payId, int timeOut, Consumer<TaskExecuteDto> consumer) {
         DateTime expireTime = DateUtil.offset(new Date(), DateField.SECOND, timeOut);
-        TaskExecuteDto executeDto = TaskExecuteDto.builder()
-                .qrMark(qrMark)
-                .taskId(configPo.getTaskId())
-                .topic(configPo.getPayTopic())
-                .taskType(MqttMsgTypeEnum.DO_TASK.getType())
-                .consumer(consumer)
-                .payId(payId)
-                .regex(configPo.getRegex())
-                .payType(configPo.getPayType())
-                .payStartTime(new Date())
-                .exeExpireTime(expireTime).build();
-        payQueue.add(executeDto);
+        TaskExecuteDto executeDto = TaskExecuteDto.builder().qrMark(qrMark).taskId(configPo.getTaskId()).topic(configPo.getPayTopic()).taskType(MqttMsgTypeEnum.DO_TASK.getType()).consumer(consumer).payId(payId).regex(configPo.getRegex()).payType(configPo.getPayType()).payStartTime(new Date()).exeExpireTime(expireTime).build();
+        payQueue.offer(executeDto);
         new Thread(() -> {
             doPay();
         }).start();
         return true;
     }
 
-    private synchronized void doPay() {
-        if (isRun) {
-            return;
+    private void doPay() {
+        synchronized (isRun) {
+            if (isRun) {
+                return;
+            }
         }
         isRun = true;
         while (isRun) {
-            Iterator<TaskExecuteDto> iterator = payQueue.iterator();
+            TaskExecuteDto taskExecuteDto = payQueue.poll();
             try {
-                while (iterator.hasNext()) {
-                    Thread.sleep(1000);
-                    TaskExecuteDto taskExecuteDto = iterator.next();
-                    MqttUpDto dto = new MqttUpDto(taskExecuteDto.getTopic(), taskExecuteDto.getTaskType(), IdUtil.getSnowflakeNextIdStr(), taskExecuteDto.getTaskId());
-                    TaskExecuteDto result = super.doTask(dto, taskExecuteDto.getTopic());
-                    log.debug("result:{}", JSON.toJSONString(result));
-                    if (result.isOk() && StrUtil.isNotEmpty(result.getResult()) && mather(result.getResult(), taskExecuteDto)) {
-                        taskExecuteDto.setPayStatus(PayStatusEnum.PAY_SUCCESS.getType());
-                        taskExecuteDto.getConsumer().accept(taskExecuteDto);
-                        iterator.remove();
-                        continue;
-                    }
-                    if (taskExecuteDto.getExeExpireTime().before(new Date())) {
-                        taskExecuteDto.setOk(true);
-                        taskExecuteDto.setPayStatus(PayStatusEnum.PAY_FAIL.getType());
-                        taskExecuteDto.getConsumer().accept(taskExecuteDto);
-                        iterator.remove();
-                    }
+                if (null == taskExecuteDto) {
+                    isRun = false;
+                    return;
                 }
-                isRun = false;
+                MqttUpDto dto = new MqttUpDto(taskExecuteDto.getTopic(), taskExecuteDto.getTaskType(), IdUtil.getSnowflakeNextIdStr(), taskExecuteDto.getTaskId());
+                TaskExecuteDto result = super.doTask(dto, taskExecuteDto.getTopic());
+                if (result.isOk()) {
+                    errorCount.set(0);
+                } else {
+                    errorCount.incrementAndGet();
+                }
+                //连续执行失败 告警
+                if (errorCount.get() > PublicConstant.PAY_MAX_ERROR_COUNT) {
+                    PushPlusUtil.send("支付任务已经连续失败" + PublicConstant.PAY_MAX_ERROR_COUNT + "次");
+                }
+                log.debug("result:{}", JSON.toJSONString(result));
+                if (result.isOk() && StrUtil.isNotEmpty(result.getResult()) && mather(result.getResult(), taskExecuteDto)) {
+                    taskExecuteDto.setPayStatus(PayStatusEnum.PAY_SUCCESS.getType());
+                    taskExecuteDto.getConsumer().accept(taskExecuteDto);
+                    continue;
+                }
+                if (taskExecuteDto.getExeExpireTime().before(new Date())) {
+                    taskExecuteDto.setOk(true);
+                    taskExecuteDto.setPayStatus(PayStatusEnum.PAY_FAIL.getType());
+                    taskExecuteDto.getConsumer().accept(taskExecuteDto);
+                    continue;
+                }
+                payQueue.offer(taskExecuteDto);
+                Thread.sleep(500);
             } catch (Exception e) {
                 isRun = false;
+                if (null != taskExecuteDto) {
+                    payQueue.offer(taskExecuteDto);
+                }
                 log.error("获取支付状态异常", e);
             }
         }
+
     }
+
 
     private boolean mather(String result, TaskExecuteDto taskExecuteDto) {
         Pattern r = Pattern.compile(taskExecuteDto.getRegex());
