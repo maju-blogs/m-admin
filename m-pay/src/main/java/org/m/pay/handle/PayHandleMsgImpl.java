@@ -125,11 +125,12 @@ public class PayHandleMsgImpl extends AbsTaskMqttHandle {
                         iterator.remove();
                     }
                 }
+                isRun = false;
             } catch (Exception e) {
+                isRun = false;
                 log.error("获取支付状态异常", e);
             }
         }
-        isRun = false;
     }
 
     private boolean mather(String result, TaskExecuteDto taskExecuteDto) {
