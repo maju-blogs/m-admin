@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 @Service
 public class PayQrConfigServiceImpl extends ServiceImpl<PayQrConfigMapper, PayQrConfigPo> implements IPayQrConfigService {
 
-    public static ConcurrentLinkedDeque<QrDto> qrDtos = new ConcurrentLinkedDeque<>();
+    public ConcurrentLinkedDeque<QrDto> qrDtos = null;
 
     @Resource
     private ResourceLoader resourceLoader;
@@ -67,18 +67,14 @@ public class PayQrConfigServiceImpl extends ServiceImpl<PayQrConfigMapper, PayQr
     @Override
     public QrDto getOneUnLockQr(Integer payType, BigDecimal payAmount) {
         long now = System.currentTimeMillis();
+        if (null == qrDtos) {
+            initQrCache();
+        }
         synchronized (qrDtos) {
             Optional<QrDto> min = qrDtos.stream().filter(item -> (!item.isLock() || item.getTimeoutLock() < now)
                             && payType == item.getQrType()
                             && payAmount.compareTo(item.getAmount()) == 0)
                     .min(Comparator.comparing(QrDto::getLastUseTime));
-            if (!min.isPresent()) {
-                initQrCache();
-                min = qrDtos.stream().filter(item -> (!item.isLock() || item.getTimeoutLock() < now)
-                                && payType == item.getQrType()
-                                && payAmount.compareTo(item.getAmount()) == 0)
-                        .min(Comparator.comparing(QrDto::getLastUseTime));
-            }
             if (min.isPresent()) {
                 QrDto qrDto = min.get();
                 lockQr(qrDto.getQrMark());
@@ -117,7 +113,7 @@ public class PayQrConfigServiceImpl extends ServiceImpl<PayQrConfigMapper, PayQr
     @Override
     public void initQrCache() {
         List<PayQrConfigPo> list = list();
-        qrDtos.clear();
+        qrDtos = new ConcurrentLinkedDeque<>();
         list.forEach(item -> {
             QrDto qrDto = QrDto.builder().qrId(item.getId()).amount(item.getPayAmount()).qrMark(item.getQrMark()).qrType(item.getQrType()).qrBase64(item.getQrBase64()).isLock(false).build();
             qrDtos.add(qrDto);
