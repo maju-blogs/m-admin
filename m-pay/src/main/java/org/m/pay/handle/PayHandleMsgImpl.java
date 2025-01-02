@@ -138,8 +138,9 @@ public class PayHandleMsgImpl extends AbsTaskMqttHandle {
         while (m.find()) {
             DateTime parse = DateUtil.parse(year + m.group(1) + PublicConstant.MAX_SECOND, dateformat);
             long betweenSecond = DateUtil.between(parse, taskExecuteDto.getPayStartTime(), DateUnit.SECOND);
-            log.debug("time:{},qrMark:{}", parse, m.group(3));
-            if ((betweenSecond < PublicConstant.PAY_TASK_DELAY_TIME) && m.group(3).equals(taskExecuteDto.getQrMark())) {
+            long payTime = DateUtil.between(taskExecuteDto.getPayStartTime(), taskExecuteDto.getExeExpireTime(), DateUnit.SECOND);
+            log.debug("time:{},qrMark:{},payTime:{}", parse, m.group(3),payTime);
+            if ((betweenSecond < payTime) && m.group(3).equals(taskExecuteDto.getQrMark())) {
                 taskExecuteDto.setPayTime(parse);
                 return true;
             }
