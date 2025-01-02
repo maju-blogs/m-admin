@@ -130,23 +130,21 @@ public class PayHandleMsgImpl extends AbsTaskMqttHandle {
     }
 
 
+
     private boolean mather(String result, TaskExecuteDto taskExecuteDto) {
         Pattern r = Pattern.compile(taskExecuteDto.getRegex());
         Matcher m = r.matcher(result);
         // 现在创建 matcher 对象
         while (m.find()) {
             DateTime parse = DateUtil.parse(year + m.group(1) + PublicConstant.MAX_SECOND, dateformat);
+            long betweenSecond = DateUtil.between(parse, taskExecuteDto.getPayStartTime(), DateUnit.SECOND);
             log.debug("time:{},qrMark:{}", parse, m.group(3));
-            if (parse.isAfter(taskExecuteDto.getPayStartTime()) && m.group(3).equals(taskExecuteDto.getQrMark())) {
+            if ((betweenSecond < PublicConstant.PAY_TASK_DELAY_TIME) && m.group(3).equals(taskExecuteDto.getQrMark())) {
                 taskExecuteDto.setPayTime(parse);
                 return true;
             }
         }
         return false;
-    }
-
-    public static void main(String[] args) {
-
     }
 
     public void initTopics() {
