@@ -85,6 +85,8 @@
 2、autoTask要保证后台自启动，推荐使用shiziku进行授权
 
 3、使用openjdk22
+
+4、后台管理账户和密码  admin/a123456
 #### 项目截图
 
 ![客户端管理](https://github.com/maju-blogs/pulbic-static-file/blob/master/m-admin/image-20240616191257127.png)
