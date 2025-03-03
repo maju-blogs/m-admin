@@ -82,6 +82,7 @@
 #### 特别说明
 1、项目自带的任务可能不支持最新的微信，可以自行在autoTask调试修改,主要是匹配文本和上传文本
 2、autoTask要保证后台自启动，推荐使用shiziku进行授权
+3、使用openjdk22
 #### 项目截图
 
 ![客户端管理](https://github.com/maju-blogs/pulbic-static-file/blob/master/m-admin/image-20240616191257127.png)
