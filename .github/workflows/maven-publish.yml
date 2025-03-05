@@ -29,8 +29,10 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
-    - name: Upload jar
-      uses: actions/upload-artifact@v3
+    - name: Compress files
+      run: zip -r target.zip m-admin/m-admin/m-web/target/
+    - name: Upload zip
+      uses: actions/upload-artifact@v4
       with:
-        name: m-web
-        path: /home/runner/work/m-admin/m-admin/m-web/target/
+        name: target.zip
+        path: target.zip
