@@ -30,7 +30,7 @@ jobs:
       run: mvn -B package --file pom.xml
 
     - name: Compress files
-      run: zip -r target.zip m-admin/m-admin/m-web/target/
+      run: zip -r target.zip /home/runner/work/m-admin/m-admin/m-web/target/
     - name: Upload zip
       uses: actions/upload-artifact@v4
       with:
